@@ -1,0 +1,140 @@
+---
+title: "RNA seq analysis"
+author: "Marie Saitou"
+date: "10/22/2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Overview
+1. Check sequence quality (FastQC/MultiQC)
+2. Trim the adaptor sequence (Trimmomatic)
+3. Check if the adaptor sequences are removed (FastQC/MultiQC)
+4. Count the transcripts (Kallisto)
+5. Analyze the transcripts (R-Deseq)
+
+---
+What you need:
+- fastq file or fg.gz (compressed fastq) file
+- referens transtript files (hg19 and )
+
+
+---
+1. Check sequence quality (FastQC/MultiQC)
+
+1-1 Run fastQC to see the sequence quality
+```{r}
+# fastqc --nogroup -o ./FastQCtrim yourfile.fq.gz
+```
+
+1-2 If you have many fastq files, multiqc can summarize the results of fastqc.
+```{r}
+# multiqc . 
+```
+
+
+2. Trim the adapter sequence (Trimmomatic)
+The adapter sequences are specific to the expeirment platform (Truseq etc.)
+"allAdapters.fa" on CCR contains most adapters as of 2018 but please check if your adapters are included. 
+
+```{r}
+# java -jar /projects/academic/omergokc/salivary_RNAseq_analysis/trimmomatic-0.36.jar PE -phred33 yourfile_R1_001.fastq.gz yourfile_R2_001.fastq.gz trim/trim_yourfile_R1_paired.fq.gz trim/trim_yourfile_R1_unpaired.fq.gz trim/trim_yourfile_R2_paired.fq.gz trim/trim_yourfile_R2_unpaired.fq.gz ILLUMINACLIP:allAdapters.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 
+```
+
+
+3. Check if the adaptor sequences are removed (FastQC/MultiQC)
+
+Same as [1]. See if "adaptor sequence" is reduced.
+
+4. Count the transcripts (Kallisto)
+- prepare the index file of reference transcripts
+- the code is slightly different dependint on if your experiment is single-end or paird-end sequencing
+
+
+Example1: human single-end sequencing
+```{r}
+# kallisto quant -i /projects/academic/omergokc/salivary_RNAseq_analysis/humanTranscriptsHG19.idx -o yourfile/fastq.kallistoOut --single -l 200 -s 20 yourfile.fastq.gz
+```
+
+Example2: mouse pair-end sequencing
+
+```{r}
+# kallisto quant -i /projects/academic/omergokc/GHR_RNAseq_Analysis2/GHR_RNAseq/mouseTranscriptsGRCm38.idx -o map/yourfile.kallistoOut -n 100 -t 32 yourfile_R1_paired.fq.gz yourfile_R2_paired.fq.gz
+```
+
+5. Analyze the transcripts (R, DEseq)
+
+Downlord kallisto output folders as it is.
+You have to prepare "samplelist.csv": the sample names in a file.
+transcript_gene.csv: the ensemble transcript-gene list.
+sample_list.csv: samplename and conditions (sex, genotype, treatment etc.)
+
+```{r}
+#library(ggplot2)
+#library(DESeq2)
+#library(tximport)
+#library(tximportData)
+
+
+#samples <- read.table(file.path("/your_directory", "samplelist.csv"), header = TRUE)
+#tx2gene1 <- read.csv(file.path("/your_directory", "transcript_gene.csv"), header = TRUE)
+#files <- file.path("/your_directory", "kallisto", samples$sample, "abundance.tsv")
+#names(files) <- samples$sample
+
+#txi <- tximport(files, type = "kallisto", tx2gene = tx2gene1)
+#head(txi$counts)
+
+## output 
+#write.csv(txi$counts, file = "raw_txi_table.csv")
+
+###
+#countData <- read.table(raw_txi_table.csv, header = T,row.names=1, sep = ",") 
+### 
+#colData <- read.table(file.choose(), header = T,row.names=1, sep = ",") 
+
+
+
+#keep <- rowSums(countData) >= 10
+## exclude lowly expressed genes
+
+#library("DESeq2")
+#dds <- DESeqDataSetFromMatrix(countData = countData,
+#                              colData = colData,
+#                              design = ~ sex + genotype)
+
+## output
+#normalized <-counts(dds, normalized=TRUE)
+#write.csv(normalized, file = "normalized1.csv")
+```
+
+
+# https://www.bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+### comparative transcriptome analysis
+
+```{r}
+## comparison between GHR_D3/WT
+#dds <- DESeq(dds)
+#res <- results(dds, contrast=c("genotype","D3","WT"))
+#write.csv(res, file = "GHR_D3_WT.csv")
+
+## add "genes" to the first column of GHR_D3_WT.csv (mouse)
+#library('biomaRt')
+#mart <- useDataset("mmusculus_gene_ensembl", useMart("ensembl"))
+
+
+#df <- read.table(file.choose(), header = T, sep = ",") 
+# GHR_D3_HT.csv
+#genes <- df$genes
+#G_list <- getBM(filters= 'ensembl_transcript_id_version', attributes=c('ensembl_transcript_id_version','ensembl_gene_id_version','external_gene_name','description','chromosome_name','start_position','end_position'),mart= mart,values=genes)
+#G_list1 <- merge(df,G_list,by.x="genes",by.y="ensembl_transcript_id_version")
+#write.csv(G_list1, file = "GHR_D3_HT_gene_name.csv")
+
+
+
+### Vidualization 
+## PCA
+#vsd <- vst(dds, blind = FALSE)
+#plotPCA(vsd, intgroup = c("sex","genotype"))
+
+```
