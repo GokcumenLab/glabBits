@@ -2,6 +2,8 @@
 
 A bunch of software scripts that we use on the lab.
 
+Fatih - East coast baby.
+
 
 
 ### Codes for LD calculation
