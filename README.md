@@ -1,6 +1,6 @@
 # Scripts
 
-A bunch of software scripts that we use on the lab.
+A bunch of software scripts that we use in the lab.
 
 
 ### Codes for LD calculation
