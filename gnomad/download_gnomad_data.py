@@ -1,26 +1,31 @@
 #!/usr/bin/env python
 # coding: utf-8
+# Gokcumen Lab at UB
 
-# In[5]:
-
-
+import os
 import requests
 import pandas as pd
 import numpy as np
 
 
-# In[14]:
-
-
-# type the gene's name in the gene_id_list here!!
+# Please double check gene_name,
+# then try enter the error gene_name in "https://gnomad.broadinstitute.org/"to check existence
 gene_id_list = [
-    "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
+    "OR52M1", "OR51B5"]
+# gene_id_list = [
+#     "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
 saved_list = []
+# directory names
+DIR_DATA = "./data/"
+DIR_OUTPUT = "./output/"
+PATH_OUTPUT = DIR_OUTPUT + "output.csv"
 
 
 def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
-    # The server gives a generic error message if the content type isn't
-    # explicitly set
+    '''
+    The server gives a generic error message if the content type isn't
+    explicitly set
+    '''
     headers = {"Content-Type": "application/json"}
     response = requests.post(url, json=jsondata, headers=headers)
     json = response.json()
@@ -30,6 +35,7 @@ def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
 
 
 def get_variant_list(gene_id, dataset="gnomad_r2_1"):
+    # Interested columns for the final merged CSV file
     # Note that this is GraphQL, not JSON.
     fmt_graphql = """
     {
@@ -114,62 +120,76 @@ def make_new_df(old_df):
     reframe_data = []
     for row in range(len(df)):
         newarray = []
-        newarray.append(df.iloc[row].get('gene_symbol')) # 1
-        newarray.append(df.iloc[row].get('chrom')) # 2
-        newarray.append(df.iloc[row].get('pos')) # 3
+        newarray.append(df.iloc[row].get('gene_symbol'))  # 1
+        newarray.append(df.iloc[row].get('chrom'))  # 2
+        newarray.append(df.iloc[row].get('pos'))  # 3
         newarray.append(df.iloc[row].get('rsid'))  # 4
-        newarray.append(df.iloc[row].get('ref')) # 5
-        newarray.append(df.iloc[row].get('alt')) # 6
-        newarray.append(df.iloc[row].get('hgvsp')) # 7
-        newarray.append(df.iloc[row].get('hgvsc')) # 8
-        newarray.append(df.iloc[row].get('consequence')) # 9
+        newarray.append(df.iloc[row].get('ref'))  # 5
+        newarray.append(df.iloc[row].get('alt'))  # 6
+        newarray.append(df.iloc[row].get('hgvsp'))  # 7
+        newarray.append(df.iloc[row].get('hgvsc'))  # 8
+        newarray.append(df.iloc[row].get('consequence'))  # 9
         if df.iloc[row].get('flags'):
-            newarray.append(df.iloc[row].get('flags')[0]) # 10
+            newarray.append(df.iloc[row].get('flags')[0])  # 10
         else:
             newarray.append('')
-        newarray.append(df.iloc[row].get('exome').get('ac')) # 11
-        newarray.append(df.iloc[row].get('exome').get('an')) # 12
-        newarray.append(df.iloc[row].get('exome').get('af')) # 13
-        newarray.append(df.iloc[row].get('exome').get('ac_hom')) # 14
-        newarray.append(df.iloc[row].get('exome').get('ac_hemi')) # 15
-        newarray.append(df.iloc[row].get('variant_id')) # 16
+        newarray.append(df.iloc[row].get('exome').get('ac'))  # 11
+        newarray.append(df.iloc[row].get('exome').get('an'))  # 12
+        newarray.append(df.iloc[row].get('exome').get('af'))  # 13
+        newarray.append(df.iloc[row].get('exome').get('ac_hom'))  # 14
+        newarray.append(df.iloc[row].get('exome').get('ac_hemi'))  # 15
+        newarray.append(df.iloc[row].get('variant_id'))  # 16
         reframe_data.append(newarray)
-    #add reframe_data and header
+    # add reframe_data and header
     new_df = pd.DataFrame(np.array(reframe_data), columns=header)
     return new_df
 
-# generate and download csv file of each gene, saved to current path
+
 def generate_csv(gene_id_list):
+    '''
+    generate and download csv file of each gene, save to current path
+    '''
     for gene_id in gene_id_list:
         try:
-            make_new_df(make_df(gene_id)).to_csv(gene_id + '.csv',index=False)
-            saved_list.append(gene_id)
+            filepath = DIR_DATA + gene_id + '.csv'
+            make_new_df(make_df(gene_id)).to_csv(filepath, index=False)
+            saved_list.append(filepath)
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except:
             print('\x1b[6;30;41m' + 'Error: ' + gene_id + '\x1b[0m')
             pass
 
-# download the combined csv file to current path, named as "output.csv"
-def combine_csv():
+
+def merge_csv():
+    '''
+    Download the merged csv file to current path, name as PATH_OUTPUT
+    '''
     generate_csv(gene_id_list)
-    combined_csv = pd.read_csv(saved_list[0] + '.csv')
-    combined_csv.to_csv('output.csv', encoding="utf_8_sig", index=False)
+    combined_csv = pd.read_csv(saved_list[0])
+    combined_csv.to_csv(PATH_OUTPUT, encoding="utf_8_sig", index=False)
     for gene_id in saved_list:
-        combined_csv = pd.read_csv(gene_id + '.csv')
-        combined_csv.to_csv('output.csv',encoding="utf_8_sig",index=False,header=False,mode='a+')
-    print('Combining file...\n\x1b[6;30;42mConbined File to output.csv\x1b[6;30;41m\n')
-
-#Please double check gene_name,
-#then try enter the error gene_name in "https://gnomad.broadinstitute.org/"to check existence
+        combined_csv = pd.read_csv(gene_id)
+        combined_csv.to_csv(PATH_OUTPUT, encoding="utf_8_sig",
+                            index=False, header=False, mode='a+')
+    print("Merging downloaded data to %s" % PATH_OUTPUT)
 
 
+def initialize_dirs():
+    '''
+    Prepares the directories
+    '''
+
+    try:
+        os.mkdir(DIR_DATA)
+        os.mkdir(DIR_OUTPUT)
+    except OSError:
+        print ("Creation of the directory %s failed" % DIR_DATA)
+        print ("Creation of the directory %s failed" % DIR_OUTPUT)
+    else:
+        print ("Successfully created the directory %s " % DIR_DATA)
+        print ("Successfully created the directory %s " % DIR_OUTPUT)
 
 
-
-# In[15]:
-
-
-combine_csv()
-
-
-# In[ ]:
+if __name__ == '__main__':
+    initialize_dirs()
+    merge_csv()
