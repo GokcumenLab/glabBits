@@ -1,6 +1,6 @@
 ### GnomAD Download
 
-`gnomad_merger.py` is used for retrieving data from gnomAD database. The script searches all the listed genes and returns a merged CSV file that contains interested columns in it. This script uses `https://gnomad.broadinstitute.org/api`.
+GnomAD merger is used for retrieving data from gnomAD database. The script searches all the listed genes and returns a merged CSV file that contains interested columns in it. This script uses https://gnomad.broadinstitute.org/api backend API
 
 A biref description is avaialble at `gnomAD.pdf`.
 
@@ -20,7 +20,7 @@ Iterested genes are listed in the `interested_genes.csv` as comma separated valu
 OR52M1, OR51B5, OR52N4, OR11H1, OR4K15, OR6S1, OR5AP2, OR5H1, OR13C2, OR2K2, OR8G5, OR1L3, OR2T27
 ```
 
-Please make sure that, the interested genes are available through the web call at "https://gnomad.broadinstitute.org/".
+Please make sure that, the interested genes are available through the web call at https://gnomad.broadinstitute.org/.
 
 After you have listed interested genes, run the script as follows;
 
