@@ -1,6 +1,6 @@
 # Scripts
 
-A bunch of software scripts that we use in the lab.
+In this repository we listed scripts that we have been using in our lab.
 
 
 ### Codes for LD calculation
@@ -14,6 +14,7 @@ The script file -->  `./codes_dup_LD.sh)`
 
 ### Gnomad Merger
 
+Gnomad Merger script, retrieves data from gnomAD database for interested genes and merges them into a single file. 
 
 
 ### Future Projects
