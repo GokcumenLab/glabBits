@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 # Constants
-FILE_GENE_LIST = "genes.csv"
+FILE_GENE_LIST = "interested_genes.csv"
 # directory names
 DIR_DATA = "./data/"
 DIR_OUTPUT = "./output/"
@@ -20,7 +20,6 @@ gene_id_list = []
 # gene_id_list = [
 #     "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
 saved_list = []
-
 
 
 def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
