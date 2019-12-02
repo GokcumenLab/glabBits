@@ -7,18 +7,20 @@ import requests
 import pandas as pd
 import numpy as np
 
-
-# Please double check gene_name,
-# then try enter the error gene_name in "https://gnomad.broadinstitute.org/"to check existence
-gene_id_list = [
-    "OR52M1", "OR51B5"]
-# gene_id_list = [
-#     "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
-saved_list = []
+# Constants
+FILE_GENE_LIST = "genes.csv"
 # directory names
 DIR_DATA = "./data/"
 DIR_OUTPUT = "./output/"
-PATH_OUTPUT = DIR_OUTPUT + "output.csv"
+PATH_OUTPUT = DIR_OUTPUT + "genes_merged.csv"
+
+# Please double check gene_name,
+# then try enter the error gene_name in "https://gnomad.broadinstitute.org/"to check existence
+gene_id_list = []
+# gene_id_list = [
+#     "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
+saved_list = []
+
 
 
 def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
@@ -151,6 +153,7 @@ def generate_csv(gene_id_list):
     '''
     for gene_id in gene_id_list:
         try:
+            gene_id = gene_id.strip()
             filepath = DIR_DATA + gene_id + '.csv'
             make_new_df(make_df(gene_id)).to_csv(filepath, index=False)
             saved_list.append(filepath)
@@ -192,4 +195,6 @@ def initialize_dirs():
 
 if __name__ == '__main__':
     initialize_dirs()
+    df = pd.read_csv(FILE_GENE_LIST, delimiter=',')
+    gene_id_list = df.columns.tolist()
     merge_csv()
