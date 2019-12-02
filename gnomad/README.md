@@ -4,6 +4,7 @@ GnomAD merger is used for retrieving data from gnomAD database. The script searc
 
 A biref description is avaialble at `gnomAD.pdf`.
 
+
 ### Installation
 
 Clone the repository to your local.
