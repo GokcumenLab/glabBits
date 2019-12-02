@@ -1,6 +1,6 @@
 # Scripts
 
-In this repository we listed scripts that we have been using in our lab.
+In this repository we listed simple scripts that we have been using in our lab mostly to data mine or manipulate large -omics datasets.
 
 
 ### Codes for LD calculation
