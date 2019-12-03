@@ -14,11 +14,8 @@ DIR_DATA = "./data/"
 DIR_OUTPUT = "./output/"
 PATH_OUTPUT = DIR_OUTPUT + "genes_merged.csv"
 
-# Please double check gene_name,
-# then try enter the error gene_name in "https://gnomad.broadinstitute.org/"to check existence
+# Global Variables
 gene_id_list = []
-# gene_id_list = [
-#     "OR52M1", "OR51B5", "OR52N4", "OR11H1", "OR4K15", "OR6S1", "OR5AP2", "OR5H1", "OR13C2", "OR2K2", "OR8G5", "OR1L3", "OR2T27"]
 saved_list = []
 
 
@@ -194,6 +191,7 @@ def initialize_dirs():
 
 if __name__ == '__main__':
     initialize_dirs()
+    # Read interested genes
     df = pd.read_csv(FILE_GENE_LIST, delimiter=',')
     gene_id_list = df.columns.tolist()
     merge_csv()
