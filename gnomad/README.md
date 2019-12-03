@@ -1,11 +1,11 @@
 ### GnomAD Download
 
-GnomAD merger is used for retrieving data from gnomAD database. The script searches all the listed genes of interest and returns a merged CSV file that contains specific columns in it. This script uses https://gnomad.broadinstitute.org/api backend API
+GnomAD merger is used for retrieving data from gnomAD database. The script searches all the listed genes of interest and returns a merged CSV file that contains specific columns in it. This script uses https://gnomad.broadinstitute.org/api backend API. 
 
 A brief description is avaialble at `gnomAD.pdf`.
 
 
-### Installation
+### Installation
 
 Clone the repository to your local.
 
