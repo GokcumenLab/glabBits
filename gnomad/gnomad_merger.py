@@ -171,8 +171,10 @@ def merge_csv(gene_id_list):
     Download the merged csv file to current path, name as PATH_OUTPUT_FILE
     '''
     generate_csv(gene_id_list)
-    combined_csv = None
-    for gene_id in saved_list:
+    combined_csv = pd.read_csv(saved_list[0])
+    combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig", index=False)
+
+    for gene_id in saved_list[1:]:
         combined_csv = pd.read_csv(gene_id)
         combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig",
                             index=False, header=False, mode='a+')
@@ -204,4 +206,7 @@ if __name__ == '__main__':
     # Read interested genes
     df = pd.read_csv(FILE_GENE_LIST, delimiter=',')
     gene_id_list = df.columns.tolist()
-    merge_csv(gene_id_list)
+    if len(gene_id_list) > 0:
+        merge_csv(gene_id_list)
+    else:
+        print('Please list interested genes in interested_genes.csv file!')
