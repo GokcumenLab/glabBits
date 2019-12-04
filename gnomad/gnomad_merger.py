@@ -94,7 +94,7 @@ def get_variant_list(gene_id, dataset="gnomad_r2_1"):
 
 
 # add the gene_id at the last column
-def make_df(gene_id):
+def generate_df(gene_id):
     li = get_variant_list(gene_id)
     df = pd.DataFrame(li)
     return df
@@ -121,7 +121,7 @@ header = [
 ]
 
 
-def create_new_df(old_df):
+def reframe(old_df):
     df = old_df[old_df['exome'].notnull()]
     reframe_data = []
     for row in range(len(df)):
@@ -159,7 +159,7 @@ def generate_csv(gene_id_list):
         try:
             gene_id = gene_id.strip()
             filepath = DIR_DATA + gene_id + '.csv'
-            create_new_df(make_df(gene_id)).to_csv(filepath, index=False)
+            reframe(generate_df(gene_id)).to_csv(filepath, index=False)
             saved_list.append(filepath)
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except:
@@ -171,6 +171,7 @@ def merge_csv(gene_id_list):
     Download the merged csv file to current path, name as PATH_OUTPUT_FILE
     '''
     generate_csv(gene_id_list)
+    #include headers
     combined_csv = pd.read_csv(saved_list[0])
     combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig", index=False)
 
