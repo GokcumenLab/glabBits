@@ -12,7 +12,7 @@ FILE_GENE_LIST = "interested_genes.csv"
 # directory names
 DIR_DATA = "./data/"
 DIR_OUTPUT = "./output/"
-PATH_OUTPUT = DIR_OUTPUT + "genes_merged.csv"
+PATH_OUTPUT_FILE = DIR_OUTPUT + "genes_merged.csv"
 
 # Global Variables
 gene_id_list = []
@@ -135,7 +135,7 @@ def create_new_df(old_df):
         newarray.append(df.iloc[row].get('hgvsp'))  # 7
         newarray.append(df.iloc[row].get('hgvsc'))  # 8
         newarray.append(df.iloc[row].get('consequence'))  # 9
-        if df.iloc[row].get('flags'): # 10
+        if df.iloc[row].get('flags'):  # 10
             newarray.append(df.iloc[row].get('flags')[0])
         else:
             newarray.append('')
@@ -164,21 +164,19 @@ def generate_csv(gene_id_list):
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except:
             print('\x1b[6;30;41m' + 'Error: ' + gene_id + '\x1b[0m')
-            pass
 
 
 def merge_csv(gene_id_list):
     '''
-    Download the merged csv file to current path, name as PATH_OUTPUT
+    Download the merged csv file to current path, name as PATH_OUTPUT_FILE
     '''
     generate_csv(gene_id_list)
-    combined_csv = pd.read_csv(saved_list[0])
-    combined_csv.to_csv(PATH_OUTPUT, encoding="utf_8_sig", index=False)
+    combined_csv = None
     for gene_id in saved_list:
         combined_csv = pd.read_csv(gene_id)
-        combined_csv.to_csv(PATH_OUTPUT, encoding="utf_8_sig",
+        combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig",
                             index=False, header=False, mode='a+')
-    print("Merging downloaded data to %s" % PATH_OUTPUT)
+    print("Merging downloaded data to %s" % PATH_OUTPUT_FILE)
 
 
 def initialize_dirs():
@@ -187,11 +185,15 @@ def initialize_dirs():
     '''
 
     try:
-        os.mkdir(DIR_DATA)
-        os.mkdir(DIR_OUTPUT)
+        if not os.path.exists(DIR_DATA):
+            os.mkdir(DIR_DATA)
+        if not os.path.exists(DIR_OUTPUT):
+            os.mkdir(DIR_OUTPUT)
+
+        if os.path.exists(PATH_OUTPUT_FILE):
+            os.remove(PATH_OUTPUT_FILE)
     except OSError:
-        print ("Creation of the directory %s failed" % DIR_DATA)
-        print ("Creation of the directory %s failed" % DIR_OUTPUT)
+        pass
     else:
         print ("Successfully created the directory %s " % DIR_DATA)
         print ("Successfully created the directory %s " % DIR_OUTPUT)
