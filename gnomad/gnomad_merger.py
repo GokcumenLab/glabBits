@@ -33,44 +33,52 @@ def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
 
 
 def get_variant_list(gene_id, dataset="gnomad_r2_1"):
-    # Interested columns for the final merged CSV file
+    '''
+    Interested columns for the final merged CSV file
+    '''
     # Note that this is GraphQL, not JSON.
     fmt_graphql = """
     {
         gene(gene_name: "%s") {
             variants(dataset: %s) {
-                consequence
-                pos
-                rsid
-                ref
-                alt
-                flags
-                lof
-                consequence_in_canonical_transcript
-                gene_symbol
-                chrom
-                hgvsc
-                reference_genome
-                exome {
+              chrom
+              pos
+              rsid
+              ref
+              alt
+              consequence
+              exome {
+                ac
+                ac_hemi
+                ac_hom
+                an
+                af
+                populations {
+                  id
                   ac
+                  an
                   ac_hemi
                   ac_hom
-                  an
-                  af
                 }
-                lof_filter
-                genome {
-                  ac
-                  ac_hemi
-                  ac_hom
-                  an
-                  af
-                }
-                lof_flags
-                hgvsc
-                hgvsp
-                reference_genome
-                variant_id: variantId
+              }
+              genome {
+                ac
+                ac_hemi
+                ac_hom
+                an
+                af
+              }
+              flags
+              lof
+              consequence_in_canonical_transcript
+              gene_symbol
+              hgvsc
+              lof_filter
+              lof_flags
+              hgvsc
+              hgvsp
+              reference_genome
+              variant_id: variantId
             }
         }
       }
@@ -113,7 +121,7 @@ header = [
 ]
 
 
-def make_new_df(old_df):
+def create_new_df(old_df):
     df = old_df[old_df['exome'].notnull()]
     reframe_data = []
     for row in range(len(df)):
@@ -127,8 +135,8 @@ def make_new_df(old_df):
         newarray.append(df.iloc[row].get('hgvsp'))  # 7
         newarray.append(df.iloc[row].get('hgvsc'))  # 8
         newarray.append(df.iloc[row].get('consequence'))  # 9
-        if df.iloc[row].get('flags'):
-            newarray.append(df.iloc[row].get('flags')[0])  # 10
+        if df.iloc[row].get('flags'): # 10
+            newarray.append(df.iloc[row].get('flags')[0])
         else:
             newarray.append('')
         newarray.append(df.iloc[row].get('exome').get('ac'))  # 11
@@ -151,7 +159,7 @@ def generate_csv(gene_id_list):
         try:
             gene_id = gene_id.strip()
             filepath = DIR_DATA + gene_id + '.csv'
-            make_new_df(make_df(gene_id)).to_csv(filepath, index=False)
+            create_new_df(make_df(gene_id)).to_csv(filepath, index=False)
             saved_list.append(filepath)
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except:
@@ -159,7 +167,7 @@ def generate_csv(gene_id_list):
             pass
 
 
-def merge_csv():
+def merge_csv(gene_id_list):
     '''
     Download the merged csv file to current path, name as PATH_OUTPUT
     '''
@@ -194,4 +202,4 @@ if __name__ == '__main__':
     # Read interested genes
     df = pd.read_csv(FILE_GENE_LIST, delimiter=',')
     gene_id_list = df.columns.tolist()
-    merge_csv()
+    merge_csv(gene_id_list)
