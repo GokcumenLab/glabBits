@@ -27,4 +27,4 @@ After you have listed genes in the file, run the script as;
 
 `python3 gnomad_merger.py`
 
-While script is running, downloaded CSV gene data will be saved in `./data` folder. When the script finished running, the final merged CSV output is saved in `./output/genes_merged.csv` file. Please make sure to copy and save this file before running the script agaian with different gene input list.
+While script is running, downloaded CSV gene data will be saved in `./data` folder. When the script finished running, the final merged CSV output is saved in `./output/genes_merged.csv` file. Please make sure to copy and save this file before running the script again with different gene input list.
