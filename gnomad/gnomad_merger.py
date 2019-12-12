@@ -100,7 +100,7 @@ def generate_df(gene_id):
     return df
 
 
-# get_header
+# Interested Columns
 header = [
     'Name',
     'Chromosome',
@@ -117,7 +117,39 @@ header = [
     'Allele Frequency',
     'Homozygote Count',
     'Hemizygote Count',
-    'Variant ID'
+    'Variant ID',
+    'Allele Count AFR',
+    'Allele Number AFR',
+    'Homozygote Count AFR',
+    'Hemizygote Count AFR',
+    'Allele Count AMR',
+    'Allele Number AMR',
+    'Homozygote Count AMR',
+    'Hemizygote Count AMR',
+    'Allele Count ASJ',
+    'Allele Number ASJ',
+    'Homozygote Count ASJ',
+    'Hemizygote Count ASJ',
+    'Allele Count EAS',
+    'Allele Number EAS',
+    'Homozygote Count EAS',
+    'Hemizygote Count EAS',
+    'Allele Count FIN',
+    'Allele Number FIN',
+    'Homozygote Count FIN',
+    'Hemizygote Count FIN',
+    'Allele Count NFE',
+    'Allele Number NFE',
+    'Homozygote Count NFE',
+    'Hemizygote Count NFE',
+    'Allele Count OTH',
+    'Allele Number OTH',
+    'Homozygote Count OTH',
+    'Hemizygote Count OTH',
+    'Allele Count SAS',
+    'Allele Number SAS',
+    'Homozygote Count SAS',
+    'Hemizygote Count SAS'
 ]
 
 
@@ -145,6 +177,16 @@ def reframe(old_df):
         newarray.append(df.iloc[row].get('exome').get('ac_hom'))  # 14
         newarray.append(df.iloc[row].get('exome').get('ac_hemi'))  # 15
         newarray.append(df.iloc[row].get('variant_id'))  # 16
+        # populations
+        popList = df.iloc[row].get('exome').get('populations', None)
+        if popList:
+            for item in popList:
+                print(item)
+                newarray.append(item['ac'])  # 'Allele Count'
+                newarray.append(item['an'])  # 'Allele Number'
+                newarray.append(item['ac_hom'])  # 'Homozygote Count'
+                newarray.append(item['ac_hemi'])  # 'Hemizygote Number'
+
         reframe_data.append(newarray)
     # add reframe_data and header
     new_df = pd.DataFrame(np.array(reframe_data), columns=header)
@@ -162,7 +204,8 @@ def generate_csv(gene_id_list):
             reframe(generate_df(gene_id)).to_csv(filepath, index=False)
             saved_list.append(filepath)
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
-        except:
+        except Exception as err:
+            print(err)
             print('\x1b[6;30;41m' + 'Error: ' + gene_id + '\x1b[0m')
 
 
@@ -171,7 +214,7 @@ def merge_csv(gene_id_list):
     Download the merged csv file to current path, name as PATH_OUTPUT_FILE
     '''
     generate_csv(gene_id_list)
-    #include headers
+    # include headers
     combined_csv = pd.read_csv(saved_list[0])
     combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig", index=False)
 
