@@ -92,9 +92,10 @@ def get_variant_list(gene_id, dataset="gnomad_r2_1"):
     response = fetch(req_variantlist)
     return response["data"]["gene"]["variants"]
 
-
-# add the gene_id at the last column
-def generate_df(gene_id):
+def generate_variants_df(gene_id):
+    '''
+    Creates a dataframe of variants with respect to the given gene_id
+    '''
     li = get_variant_list(gene_id)
     df = pd.DataFrame(li)
     return df
@@ -153,8 +154,11 @@ header = [
 ]
 
 
-def reframe(old_df):
-    df = old_df[old_df['exome'].notnull()]
+def reframe(variant_df):
+    '''
+    Reframes the fetched data
+    '''
+    df = variant_df[variant_df['exome'].notnull()]
     reframe_data = []
     for row in range(len(df)):
         newarray = []
@@ -181,7 +185,7 @@ def reframe(old_df):
         popList = df.iloc[row].get('exome').get('populations', None)
         if popList:
             for item in popList:
-                print(item)
+                #print(item)
                 newarray.append(item['ac'])  # 'Allele Count'
                 newarray.append(item['an'])  # 'Allele Number'
                 newarray.append(item['ac_hom'])  # 'Homozygote Count'
@@ -201,7 +205,7 @@ def generate_csv(gene_id_list):
         try:
             gene_id = gene_id.strip()
             filepath = DIR_DATA + gene_id + '.csv'
-            reframe(generate_df(gene_id)).to_csv(filepath, index=False)
+            reframe(generate_variants_df(gene_id)).to_csv(filepath, index=False)
             saved_list.append(filepath)
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except Exception as err:
