@@ -29,6 +29,6 @@ After you have listed genes in the file, run the script as;
 
 While script is running, downloaded CSV gene data will be saved in `./data` folder. When the script finished running, the final merged CSV output files are saved into `./output/` folder.
 
-`./output/genes_merged.csv` contains variants of each genes and `./output/constraints_merged.csv`file contains gene constraint data of each gene.
+`./output/genes_merged.csv` contains variants of each gene and `./output/constraints_merged.csv`file contains gene constraint data of each gene.
 
 Please make sure to copy and save the output files before running the script again with different gene input list.
