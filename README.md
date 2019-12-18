@@ -10,4 +10,4 @@ We modified VCFtools (0.1.16) (Danecek et al. 2011) to calculate the R2 between 
 
 ### [Gnomad Merger](./gnomad)
 
-Gnomad Merger script, retrieves data from gnomAD database for interested genes and merges them into a single file.
+GnomAD merger is used for retrieving data from GnomAD (genome aggregation database). The script searches all the listed genes of interest and returns a merged CSV file that contains specific columns in it. This script uses https://gnomad.broadinstitute.org/api backend API.
