@@ -6,17 +6,90 @@ import os
 import requests
 import pandas as pd
 import numpy as np
-
+import json
 # Constants
 FILE_GENE_LIST = "interested_genes.csv"
 # directory names
 DIR_DATA = "./data/"
 DIR_OUTPUT = "./output/"
-PATH_OUTPUT_FILE = DIR_OUTPUT + "genes_merged.csv"
+PATH_VARIANT_OUTPUT_FILE = DIR_OUTPUT + "genes_merged.csv"
+PATH_CONSTRAINTS_OUTPUT_FILE = DIR_OUTPUT + "constraints_merged.csv"
+
+# Interested Columns
+HEADER_VARIANTS = [
+    'Name',
+    'Chromosome',
+    'Position',
+    'rsID',
+    'Reference',
+    'Alternate',
+    'Protein Consequence',
+    'Transcript Consequence',
+    'Annotation',
+    'Flags',
+    'Allele Count',
+    'Allele Number',
+    'Allele Frequency',
+    'Homozygote Count',
+    'Hemizygote Count',
+    'Variant ID',
+    'Allele Count AFR',
+    'Allele Number AFR',
+    'Homozygote Count AFR',
+    'Hemizygote Count AFR',
+    'Allele Count AMR',
+    'Allele Number AMR',
+    'Homozygote Count AMR',
+    'Hemizygote Count AMR',
+    'Allele Count ASJ',
+    'Allele Number ASJ',
+    'Homozygote Count ASJ',
+    'Hemizygote Count ASJ',
+    'Allele Count EAS',
+    'Allele Number EAS',
+    'Homozygote Count EAS',
+    'Hemizygote Count EAS',
+    'Allele Count FIN',
+    'Allele Number FIN',
+    'Homozygote Count FIN',
+    'Hemizygote Count FIN',
+    'Allele Count NFE',
+    'Allele Number NFE',
+    'Homozygote Count NFE',
+    'Hemizygote Count NFE',
+    'Allele Count OTH',
+    'Allele Number OTH',
+    'Homozygote Count OTH',
+    'Hemizygote Count OTH',
+    'Allele Count SAS',
+    'Allele Number SAS',
+    'Homozygote Count SAS',
+    'Hemizygote Count SAS'
+]
+
+HEADER_CONSTRAINTS = [
+    'gene_name',
+    'exp_lof',
+    'exp_mis',
+    'exp_syn',
+    'obs_lof',
+    'obs_mis',
+    'obs_syn',
+    'oe_lof',
+    'oe_mis',
+    'oe_syn',
+    'lof_z',
+    'mis_z',
+    'syn_z',
+    'pLI',
+    'flags'
+]
+
 
 # Global Variables
 gene_id_list = []
 saved_list = []
+constraints_list = []
 
 
 def fetch(jsondata, url="https://gnomad.broadinstitute.org/api"):
@@ -92,6 +165,7 @@ def get_variant_list(gene_id, dataset="gnomad_r2_1"):
     response = fetch(req_variantlist)
     return response["data"]["gene"]["variants"]
 
+
 def generate_variants_df(gene_id):
     '''
     Creates a dataframe of variants with respect to the given gene_id
@@ -101,60 +175,7 @@ def generate_variants_df(gene_id):
     return df
 
 
-# Interested Columns
-header = [
-    'Name',
-    'Chromosome',
-    'Position',
-    'rsID',
-    'Reference',
-    'Alternate',
-    'Protein Consequence',
-    'Transcript Consequence',
-    'Annotation',
-    'Flags',
-    'Allele Count',
-    'Allele Number',
-    'Allele Frequency',
-    'Homozygote Count',
-    'Hemizygote Count',
-    'Variant ID',
-    'Allele Count AFR',
-    'Allele Number AFR',
-    'Homozygote Count AFR',
-    'Hemizygote Count AFR',
-    'Allele Count AMR',
-    'Allele Number AMR',
-    'Homozygote Count AMR',
-    'Hemizygote Count AMR',
-    'Allele Count ASJ',
-    'Allele Number ASJ',
-    'Homozygote Count ASJ',
-    'Hemizygote Count ASJ',
-    'Allele Count EAS',
-    'Allele Number EAS',
-    'Homozygote Count EAS',
-    'Hemizygote Count EAS',
-    'Allele Count FIN',
-    'Allele Number FIN',
-    'Homozygote Count FIN',
-    'Hemizygote Count FIN',
-    'Allele Count NFE',
-    'Allele Number NFE',
-    'Homozygote Count NFE',
-    'Hemizygote Count NFE',
-    'Allele Count OTH',
-    'Allele Number OTH',
-    'Homozygote Count OTH',
-    'Hemizygote Count OTH',
-    'Allele Count SAS',
-    'Allele Number SAS',
-    'Homozygote Count SAS',
-    'Hemizygote Count SAS'
-]
-
-
-def reframe(variant_df):
+def reframe_variants(variant_df):
     '''
     Reframes the fetched data
     '''
@@ -185,7 +206,7 @@ def reframe(variant_df):
         popList = df.iloc[row].get('exome').get('populations', None)
         if popList:
             for item in popList:
-                #print(item)
+                # print(item)
                 newarray.append(item['ac'])  # 'Allele Count'
                 newarray.append(item['an'])  # 'Allele Number'
                 newarray.append(item['ac_hom'])  # 'Homozygote Count'
@@ -193,20 +214,64 @@ def reframe(variant_df):
 
         reframe_data.append(newarray)
     # add reframe_data and header
-    new_df = pd.DataFrame(np.array(reframe_data), columns=header)
+    new_df = pd.DataFrame(np.array(reframe_data), columns=HEADER_VARIANTS)
     return new_df
 
 
-def generate_csv(gene_id_list):
+def fetch_constraints_by_gene_id(gene_id):
     '''
-    generate and download csv file of each gene, save to current path
+    Interested columns for the constraint merged CSV file
+    '''
+    # Note that this is GraphQL, not JSON.
+    fmt_graphql = """
+    {
+        gene(gene_name: "%s") {
+            gene_name
+            gnomad_constraint {
+                exp_lof
+                exp_mis
+                exp_syn
+                obs_lof
+                obs_mis
+                obs_syn
+                oe_lof
+                oe_mis
+                oe_syn
+                lof_z
+                mis_z
+                syn_z
+                pLI
+                flags
+            }
+      }
+    }
+    """
+    # This part will be JSON encoded, but with the GraphQL part left as a
+    # glob of text.
+    req_constraint_list = {
+        "query": fmt_graphql % (gene_id),
+        "variables": {}
+    }
+    response = fetch(req_constraint_list)
+    # include gene_name
+    response["data"]["gene"]["gnomad_constraint"]["gene_name"] = response["data"]["gene"]["gene_name"]
+    #print(json.dumps(response, indent=2))
+    return response["data"]["gene"]["gnomad_constraint"]
+
+def generate_csv_files(gene_id_list):
+    '''
+    generate and download csv file of each gene, save to the current path
     '''
     for gene_id in gene_id_list:
         try:
             gene_id = gene_id.strip()
+            # variants
             filepath = DIR_DATA + gene_id + '.csv'
-            reframe(generate_variants_df(gene_id)).to_csv(filepath, index=False)
+            reframe_variants(generate_variants_df(gene_id)
+                             ).to_csv(filepath, index=False)
             saved_list.append(filepath)
+            # constraints
+            constraints_list.append(fetch_constraints_by_gene_id(gene_id))
             print('\x1b[6;30;42m' + 'Saved: ' + gene_id + '\x1b[0m')
         except Exception as err:
             print(err)
@@ -215,18 +280,25 @@ def generate_csv(gene_id_list):
 
 def merge_csv(gene_id_list):
     '''
-    Download the merged csv file to current path, name as PATH_OUTPUT_FILE
+    Download the merged csv file to current path, name as PATH_VARIANT_OUTPUT_FILE
     '''
-    generate_csv(gene_id_list)
+    generate_csv_files(gene_id_list)
     # include headers
     combined_csv = pd.read_csv(saved_list[0])
-    combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig", index=False)
+    combined_csv.to_csv(PATH_VARIANT_OUTPUT_FILE,
+                        encoding="utf_8_sig", index=False)
 
     for gene_id in saved_list[1:]:
         combined_csv = pd.read_csv(gene_id)
-        combined_csv.to_csv(PATH_OUTPUT_FILE, encoding="utf_8_sig",
+        combined_csv.to_csv(PATH_VARIANT_OUTPUT_FILE, encoding="utf_8_sig",
                             index=False, header=False, mode='a+')
-    print("Merging downloaded data to %s" % PATH_OUTPUT_FILE)
+    print("Merging downloaded data to %s" % PATH_VARIANT_OUTPUT_FILE)
+    # add reframe_data and header
+    new_c_df = pd.DataFrame(constraints_list, columns=HEADER_CONSTRAINTS)
+    new_c_df.to_csv(PATH_CONSTRAINTS_OUTPUT_FILE,
+                    encoding="utf_8_sig", index=False)
+    print("Merging downloaded data to %s" % PATH_CONSTRAINTS_OUTPUT_FILE)
+
 
 
 def initialize_dirs():
@@ -240,8 +312,11 @@ def initialize_dirs():
         if not os.path.exists(DIR_OUTPUT):
             os.mkdir(DIR_OUTPUT)
 
-        if os.path.exists(PATH_OUTPUT_FILE):
-            os.remove(PATH_OUTPUT_FILE)
+        if os.path.exists(PATH_VARIANT_OUTPUT_FILE):
+            os.remove(PATH_VARIANT_OUTPUT_FILE)
+
+        if os.path.exists(PATH_CONSTRAINTS_OUTPUT_FILE):
+            os.remove(PATH_CONSTRAINTS_OUTPUT_FILE)
     except OSError:
         pass
     else:
