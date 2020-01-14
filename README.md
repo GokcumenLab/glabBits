@@ -11,3 +11,9 @@ We modified VCFtools (0.1.16) (Danecek et al. 2011) to calculate the R2 between 
 ### [Gnomad Merger](./gnomad)
 
 GnomAD merger is used for retrieving data from GnomAD (genome aggregation database). The script searches all the listed genes of interest and returns a merged CSV file that contains specific columns in it. This script uses https://gnomad.broadinstitute.org/api backend API.
+
+
+### [Saliva RNA Seq](./Saliva-RNASeq)
+
+This is the R codes which were used to generate figures in our manuscript,
+"Integrative analysis of transcriptome and proteome sheds light on functional differences between human salivary glands".
