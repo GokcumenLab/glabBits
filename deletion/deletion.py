@@ -5,6 +5,8 @@
 # Getting Neandertal/Denisovan read depth
 
 import subprocess
+import os.path
+from os import path
 
 # Modules
 # python/py36-anaconda-5.3.1
@@ -18,7 +20,8 @@ MANUAL_FILE_NAME = "TableS1.csv"
 BAM_FILE = "AltaiNea.hg19_1000g.{chr}.dq.bam".format(chr=CHR)
 GENERATED_BED_FILE = BAM_FILE.rsplit('.', 1)[0] + '.bed'
 OUTPUT_FILE_NAME = "{chr}_del_count.csv".format(chr=CHR)
-
+URL = "http://cdna.eva.mpg.de/neandertal/altai/AltaiNeandertal/bam/"
+BAM_URL = URL + BAM_FILE
 # AltaiNea.hg19_1000g.4.dq.bam AltaiNea.hg19_1000g.4.dq.bed
 CMD_BAM_TO_BED = "bamToBed -i {bamfile} > {outputfile}".format(
     bamfile=BAM_FILE, outputfile=GENERATED_BED_FILE)
@@ -35,7 +38,7 @@ def runShellCmd(cmd: str):
     print("--------------------------------")
     print(cmd)
     print("--------------------------------")
-    
+
     result = subprocess.run(cmd,
                             shell=True,
                             # Probably don't forget these, too
@@ -46,8 +49,10 @@ def runShellCmd(cmd: str):
     print(result)
     return result
 
-list_files = subprocess.run(["ls", "-l"])
-print("The exit code was: %d" % list_files.returncode)
+# check BAM file and download if necessary
+if(not path.exists(BAM_FILE)):
+    print("downloading {} file ".format(BAM_FILE))
+    runShellCmd("wget {}".format(BAM_URL))
 
 # convert the downloaded BAM file into BED file
 runShellCmd(CMD_BAM_TO_BED)
