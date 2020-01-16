@@ -59,11 +59,10 @@ else:
 # check BED file and convert if necessary
 if(not path.exists(GENERATED_BED_FILE)):
     print("converted {} file ".format(GENERATED_BED_FILE))
+    # convert the downloaded BAM file into BED file
     runShellCmd(CMD_BAM_TO_BED)
 else:
     print("File {} is already converted, using the same file without converting again".format(GENERATED_BED_FILE))
-# convert the downloaded BAM file into BED file
-
 
 #  count the read depth within certain intervals
 runShellCmd(CMD_INTERSECT_BED)
