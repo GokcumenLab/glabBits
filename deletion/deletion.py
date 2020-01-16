@@ -53,14 +53,14 @@ def runShellCmd(cmd: str):
 if(not path.exists(BAM_FILE)):
     print("downloading {} file ".format(BAM_FILE))
     runShellCmd("wget {}".format(BAM_URL))
-elif:
+else:
     print("File {} is already downloaded, using the same file without downloading again".format(BAM_FILE))
 
 # check BED file and convert if necessary
 if(not path.exists(GENERATED_BED_FILE)):
     print("converted {} file ".format(GENERATED_BED_FILE))
     runShellCmd(CMD_BAM_TO_BED)
-elif:
+else:
     print("File {} is already converted, using the same file without converting again".format(GENERATED_BED_FILE))
 # convert the downloaded BAM file into BED file
 
