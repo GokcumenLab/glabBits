@@ -49,20 +49,21 @@ def runShellCmd(cmd: str):
     print(result)
     return result
 
-# check BAM file and download if necessary
-if(not path.exists(BAM_FILE)):
-    print("downloading {} file ".format(BAM_FILE))
-    runShellCmd("wget {}".format(BAM_URL))
-else:
-    print("File {} is already downloaded, using the same file without downloading again".format(BAM_FILE))
+if __name__ == '__main__':
+    # check BAM file and download if necessary
+    if(not path.exists(BAM_FILE)):
+        print("downloading {} file ".format(BAM_FILE))
+        runShellCmd("wget {}".format(BAM_URL))
+    else:
+        print("File {} is already downloaded, using the same file without downloading again".format(BAM_FILE))
 
-# check BED file and convert if necessary
-if(not path.exists(GENERATED_BED_FILE)):
-    print("converted {} file ".format(GENERATED_BED_FILE))
-    # convert the downloaded BAM file into BED file
-    runShellCmd(CMD_BAM_TO_BED)
-else:
-    print("File {} is already converted, using the same file without converting again".format(GENERATED_BED_FILE))
+    # check BED file and convert if necessary
+    if(not path.exists(GENERATED_BED_FILE)):
+        print("converted {} file ".format(GENERATED_BED_FILE))
+        # convert the downloaded BAM file into BED file
+        runShellCmd(CMD_BAM_TO_BED)
+    else:
+        print("File {} is already converted, using the same file without converting again".format(GENERATED_BED_FILE))
 
-#  count the read depth within certain intervals
-runShellCmd(CMD_INTERSECT_BED)
+    #  count the read depth within certain intervals
+    runShellCmd(CMD_INTERSECT_BED)
