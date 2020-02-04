@@ -15,4 +15,5 @@ ANCIENT_PATH = SHARED_PATH +  "/ancient"
 
 # Software Paths
 SOFTWARE_PATH = SHARED_PATH +  "/software"
+SOFTWARE_PYTHON_PATH = SHARED_PATH +  "/python/common/"
 SOFTWARE_CANAVAR_PATH = SOFTWARE_PATH +  "/canavar/bin/"
