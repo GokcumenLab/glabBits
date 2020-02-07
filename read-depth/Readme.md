@@ -1,6 +1,11 @@
 ## Read-depth Script
+Given a BAM file (reads mapped to a reference), this script calculates the read depth in windows of the genome that were identified as being polymorphically deleted in modern humans in the 1000 genomes data.
 
 
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
 THE SCRIPT USES THE FOLLOWING INPUTS:
 1) A BED file containing the start and end position of each polymorphic deletion window from the 1000 Genomes data present in a certain chromosome.
 2) A BAM file for the same chromosome.
