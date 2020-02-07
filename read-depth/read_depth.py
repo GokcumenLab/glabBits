@@ -16,8 +16,8 @@ from os import path
 # Remaning files are generated with respect to the given CHR name
 CHR = "19"
 MANUAL_FILE_NAME = "TableS1.csv"
-
 BAM_FILE = "AltaiNea.hg19_1000g.{chr}.dq.bam".format(chr=CHR)
+
 GENERATED_BED_FILE = BAM_FILE.rsplit('.', 1)[0] + '.bed'
 OUTPUT_FILE_NAME = "{chr}_del_count.csv".format(chr=CHR)
 URL = "http://cdna.eva.mpg.de/neandertal/altai/AltaiNeandertal/bam/"

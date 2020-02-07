@@ -31,7 +31,7 @@ if __name__ == '__main__':
     sys.path.append(SOFTWARE_CANAVAR_PATH)
 
     # prepare the command
-    command = SOFTWARE_CANAVAR_PATH + "mrcanavar-auto --ref " + args.ref + " --unmasked-ref " + args.unmasked_ref + \
+    command = "mrcanavar-auto --ref " + args.ref + " --unmasked-ref " + args.unmasked_ref + \
         " --aln-input " + args.aln + " --conf " + args.conf + \
         " --gene " + args.gene + " --threads 32 --no-sam"
     runShellCmd(command)

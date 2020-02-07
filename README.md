@@ -14,6 +14,11 @@ This is the R codes which were used to generate figures in our manuscript,
 "Integrative analysis of transcriptome and proteome sheds light on functional differences between human salivary glands".
 
 
+### [Read-depth Script](./read-depth)
+
+Given a BAM file (reads mapped to a reference), this script calculates the read depth in windows of the genome that were identified as being polymorphically deleted in modern humans in the 1000 genomes data.
+
+
 ###  [LD Calculation](./ld-calculation)
 
 We modified VCFtools (0.1.16) (Danecek et al. 2011) to calculate the R2 between a target duplication and other variants in a genome-wide manner. We first made a custom genome-wide VCF file from 1000 Genomes phase 3 dataset for CEU, YRI and CHB population. We conducted population-specific analyses to increase the sensitivity of linkage disequilibrium. To reduce file size, we omitted variants which were not observed in the population of interest. Then we calculated the R2 between a target duplication and other variants in a genome-wide manner with VCFtools (0.1.16). We visualized linkage disequilibrium by using R qqman package (fig. 1B).
