@@ -12,7 +12,7 @@ from os import path
 ##############
 
 
-def runShellCmd(cmd: str):
+def runShellCmd(cmd: str, custom_path: str = ""):
     '''
     Runs the given commmand on the shell
     '''
@@ -20,14 +20,16 @@ def runShellCmd(cmd: str):
     print("--------------------------------")
     print(cmd)
     print("--------------------------------")
-
+    my_env = os.environ.copy()
+    my_env["PATH"] = custom_path + ":" + my_env["PATH"]
     result = subprocess.run(cmd,
                             shell=True,
                             # Probably don't forget these, too
-                            check=True)
+                            check=True,
+                            env=my_env)
     if result.returncode != 0:
         print("FAILED! Unable to run {}".format(cmd))
-
+    print(my_env)
     print(result)
     return result
 
@@ -38,6 +40,7 @@ def downloadFile(url):
     '''
     print("downloading {} file ".format(url))
     runShellCmd("wget {}".format(url))
+
 
 def downloadAllFile(url):
     '''

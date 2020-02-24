@@ -34,4 +34,4 @@ if __name__ == '__main__':
     command = "mrcanavar-auto --ref " + args.ref + " --unmasked-ref " + args.unmasked_ref + \
         " --aln-input " + args.aln + " --conf " + args.conf + \
         " --gene " + args.gene + " --threads 32 --no-sam"
-    runShellCmd(command)
+    runShellCmd(command,SOFTWARE_CANAVAR_PATH)
