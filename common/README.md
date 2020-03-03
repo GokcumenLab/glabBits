@@ -7,7 +7,7 @@ Common scripts and libraries are stored in this directory
 
 If you want to download a big file using cluster computing resources you can use the download script.
 
-All you need to do is fetch the  [common](./common)  folder and use [slurm_download.conf](./slurm_download.conf) file to submit a download file job to the cluster.
+All you need to do is fetch the this folder and use [slurm_download.conf](./slurm_download.conf) file to submit a download file job to the cluster.
 
 Make sure to edit `slurm_download.conf` file and change the download.py's argument to the URI location of the file that you want to download.
 
