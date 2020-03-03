@@ -21,9 +21,10 @@ python download_file.py http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/h
 ```
 
 
-Also make sure to the email address to the `##SBATCH --mail-user=cdc@buffalo.edu
+Also make sure to change the email address to the `##SBATCH --mail-user=cdc@buffalo.edu
 ` line so that, the script notifies you when the download started and completed. The downloaded file will be ready inside the same directory that you submit the task.
 
+You can then submit the task using a terminal inside the cluster and via `sbatch slurm_download.conf` command.
 
 
 ----------------------
