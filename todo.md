@@ -1,3 +1,10 @@
+PROJECT 0 - CANAVAR
+
+1. Validating the chromosome 21 calls
+2. Running iti for the other chromosomes.
+
+##################
+
 PROJECT 1 - LINKAGE DISEQUILIBRIUM
 1. Search for SNPs in LD with all SVs of interest (not just duplications)
 2. Search only 50kb downstream and upstream of the SV, not the whole genome (as is currently done in Marie's code
