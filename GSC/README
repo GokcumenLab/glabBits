@@ -1,0 +1,38 @@
+
+########################################################################################################################
+#      	       	       	       	       	       	       	       	       	       	       	       	       	       	       #
+#  This directory is the working directory of performing simulations using the Genome Structure Correction (GSC) tool  #
+#                                                                                                                      #
+#  of ENCODE.          	       	       	       	       	       	       	       	       	       	       	       	       #
+#      	       	       	       	       	       	       	       	       	       	       	       	       	       	       #
+#  I applied the GSC block_bootstrap tool on human-specific, introgressed and ancient deletions to see whether their   #
+#                                                                                                                      #
+#  depletion with exon are significant. The commands I used are listed in the file python.slurm                        #                                                                               
+#                                                                                                                      #
+########################################################################################################################
+
+
+block_bootstrap:
+	the folder containing the GSC tools (python scripts)
+
+python.slurm
+	The command I used for the simulation. 
+	python block_bootstrap/block_bootstrap.py -1 [exon] -2 [deletion file] -d [domain] -r 0.02 -n 1000 -v -t cc > [output]
+
+exon.bed
+	the BED file of refSeq exons.
+
+domain.bed
+	the "domain" file. It depict the genomic range where simulation can be made. This file covers all regions of the Hg19
+	genome excluding the seqencing gap and the 1KG deletions.
+
+domain2
+	not used at the end of the day. It's also a domain file, but it only exclude the gaps, not the 1KG deletions. 
+
+deletion & shuffled files:
+	the deletion files of different categories were defined by out study. The shuffled file were made using shuffleBed (
+	excluding gap and 1KG deletion when shuffling) and were used as controls.
+
+simulation_output
+	the output of ancient, introgressed, and human-specific deletion simulations. The test used for all these simulation 
+	is Pearsn correlation.
