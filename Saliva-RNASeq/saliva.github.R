@@ -9,7 +9,7 @@
 library(ggplot2)
 library(ggrepel)
 
-## Volcano plot (Figure 2B)
+## Volcano plot (Figure)
 df1  <- read.csv(file.choose(), header = T, sep = ",")
 sp<-ggplot(df1, aes(x=Submandibular_FC, y=-log10(Submandibular_padj), color=Submandibular_color)) + geom_point()+ scale_color_manual(values=c("azure4","brown3")) + xlim(-50, 50) + ylim(0, 300)
 sp+ geom_hline(yintercept = 4, linetype="dashed",  color = "black", size=0.7)
@@ -50,7 +50,7 @@ ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
 print(ggheatmap)
 
 
-## Bar plot with dots (Figure S3)
+## Box plot with dots (Figure S3)
 
 e <- ggplot(input, aes(x=Gland, y=Secreted.All, fill=Development))
 
